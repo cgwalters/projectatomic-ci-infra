@@ -55,6 +55,7 @@
 
           white-list: [ '{white-list}' ]
           org-list: [ 'projectatomic openshift flatpak ostreedev' ]
+          black-list-labels: [ '{black-list-labels}' ]
           allow-whitelist-orgs-as-admins: true
 
           # This doesn't actually matter since we don't do any status updates
@@ -72,7 +73,7 @@
           started-status: '--none--'
           success-status: '--none--'
 
-          trigger-phrase: 'bot, retest this please'
+          trigger-phrase: '{trigger-phrase}'
     builders:
       - shell: |
           #!/bin/bash
@@ -119,7 +120,12 @@
 - job-group:
     name: papr-jobs
     jobs:
-        - 'papr-trigger-{ghowner}-{ghrepo}'
+        - 'papr-trigger-openshift-{ghrepo}':
+          trigger-phrase: "/retest"
+          black-list-labels: "needs-ok-to-test"
+        - 'papr-trigger-{ghowner}-{ghrepo}':
+          trigger-phrase: "bot, retest this please"
+          black-list-labels: ""
 
 - project:
     name: papr-triggers
